@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from 'react'
+import OnboardingChecklist from '@/components/organisms/OnboardingChecklist'
 import { motion } from "framer-motion"
 import { toast } from "react-toastify"
 import Input from "@/components/atoms/Input"

@@ -1,18 +1,18 @@
-import { useState, useEffect } from "react"
-import { toast } from "react-toastify"
-import Header from "@/components/organisms/Header"
-import FilterBar from "@/components/organisms/FilterBar"
-import EmployeeCard from "@/components/organisms/EmployeeCard"
-import EmployeeList from "@/components/organisms/EmployeeList"
-import EmployeeModal from "@/components/organisms/EmployeeModal"
-import Loading from "@/components/ui/Loading"
-import Error from "@/components/ui/Error"
-import Empty from "@/components/ui/Empty"
-import Button from "@/components/atoms/Button"
-import ApperIcon from "@/components/ApperIcon"
-import { employeeService } from "@/services/api/employeeService"
-import { departmentService } from "@/services/api/departmentService"
-
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { employeeService } from "@/services/api/employeeService";
+import { departmentService } from "@/services/api/departmentService";
+import ApperIcon from "@/components/ApperIcon";
+import Header from "@/components/organisms/Header";
+import EmployeeCard from "@/components/organisms/EmployeeCard";
+import EmployeeList from "@/components/organisms/EmployeeList";
+import FilterBar from "@/components/organisms/FilterBar";
+import EmployeeModal from "@/components/organisms/EmployeeModal";
+import Button from "@/components/atoms/Button";
+import Error from "@/components/ui/Error";
+import Empty from "@/components/ui/Empty";
+import Loading from "@/components/ui/Loading";
+import OnboardingChecklist from "@/components/organisms/OnboardingChecklist";
 const EmployeesPage = () => {
   const [employees, setEmployees] = useState([])
   const [departments, setDepartments] = useState([])
@@ -22,9 +22,10 @@ const EmployeesPage = () => {
   const [view, setView] = useState("grid")
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedDepartment, setSelectedDepartment] = useState("")
-  const [selectedRole, setSelectedRole] = useState("")
+const [selectedRole, setSelectedRole] = useState("")
   const [selectedEmployee, setSelectedEmployee] = useState(null)
   const [showModal, setShowModal] = useState(false)
+  const [showOnboarding, setShowOnboarding] = useState(false)
 
   useEffect(() => {
     loadData()
@@ -90,9 +91,25 @@ const EmployeesPage = () => {
     setShowModal(false)
     setSelectedEmployee(null)
   }
-
-  const handleModalSave = () => {
+const handleModalSave = () => {
     loadData()
+  }
+
+  const handleOnboardingUpdate = async (onboardingProgress) => {
+    if (!selectedEmployee) return
+    
+    try {
+      await employeeService.updateOnboardingProgress(selectedEmployee.Id, onboardingProgress)
+      // Update the selected employee with new progress
+      setSelectedEmployee(prev => ({
+        ...prev,
+        onboardingProgress
+      }))
+      await loadData()
+    } catch (error) {
+      console.error('Failed to update onboarding progress:', error)
+      throw error // Re-throw for component error handling
+    }
   }
 
   const handleEmail = (email) => {
@@ -183,13 +200,45 @@ const EmployeesPage = () => {
           )}
         </>
       )}
-
-      <EmployeeModal
+<EmployeeModal
         employee={selectedEmployee}
         isOpen={showModal}
         onClose={handleModalClose}
         onSave={handleModalSave}
+        onShowOnboarding={() => setShowOnboarding(true)}
       />
+
+      {/* Onboarding Modal */}
+      {showOnboarding && selectedEmployee && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    Onboarding Progress
+                  </h2>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {selectedEmployee.firstName} {selectedEmployee.lastName}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowOnboarding(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <ApperIcon name="X" className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+            <div className="p-6">
+              <OnboardingChecklist
+                employee={selectedEmployee}
+                onProgressUpdate={handleOnboardingUpdate}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
