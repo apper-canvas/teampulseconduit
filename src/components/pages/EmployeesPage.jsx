@@ -5,6 +5,7 @@ import { departmentService } from "@/services/api/departmentService";
 import ApperIcon from "@/components/ApperIcon";
 import Header from "@/components/organisms/Header";
 import EmployeeCard from "@/components/organisms/EmployeeCard";
+import OnboardingChecklist from "@/components/organisms/OnboardingChecklist";
 import EmployeeList from "@/components/organisms/EmployeeList";
 import FilterBar from "@/components/organisms/FilterBar";
 import EmployeeModal from "@/components/organisms/EmployeeModal";
@@ -12,7 +13,6 @@ import Button from "@/components/atoms/Button";
 import Error from "@/components/ui/Error";
 import Empty from "@/components/ui/Empty";
 import Loading from "@/components/ui/Loading";
-import OnboardingChecklist from "@/components/organisms/OnboardingChecklist";
 const EmployeesPage = () => {
   const [employees, setEmployees] = useState([])
   const [departments, setDepartments] = useState([])
@@ -35,7 +35,7 @@ const [selectedRole, setSelectedRole] = useState("")
     filterEmployees()
   }, [employees, searchQuery, selectedDepartment, selectedRole])
 
-  const loadData = async () => {
+const loadData = async () => {
     setLoading(true)
     setError(null)
     try {
@@ -43,8 +43,34 @@ const [selectedRole, setSelectedRole] = useState("")
         employeeService.getAll(),
         departmentService.getAll()
       ])
-      setEmployees(employeesData)
-      setDepartments(departmentsData)
+      
+      // Transform data to match UI expectations
+      const transformedEmployees = employeesData.map(emp => ({
+        ...emp,
+        firstName: emp.first_name_c || '',
+        lastName: emp.last_name_c || '',
+        email: emp.email_c || '',
+        phone: emp.phone_c || '',
+        photoUrl: emp.photo_url_c || '',
+        role: emp.role_c || '',
+        department: emp.department_c || '',
+        startDate: emp.start_date_c || '',
+        status: emp.status_c || 'active',
+        managerId: emp.manager_id_c || '',
+        onboardingProgress: emp.onboarding_progress_c ? JSON.parse(emp.onboarding_progress_c) : []
+      }))
+      
+      const transformedDepartments = departmentsData.map(dept => ({
+        ...dept,
+        name: dept.Name || '',
+        description: dept.description_c || '',
+        headId: dept.head_id_c || '',
+        parentDepartmentId: dept.parent_department_id_c || '',
+        employeeCount: dept.employee_count_c || 0
+      }))
+      
+      setEmployees(transformedEmployees)
+      setDepartments(transformedDepartments)
     } catch (err) {
       setError("Failed to load employee data")
       console.error("Load error:", err)
@@ -95,17 +121,19 @@ const handleModalSave = () => {
     loadData()
   }
 
-  const handleOnboardingUpdate = async (onboardingProgress) => {
+const handleOnboardingUpdate = async (onboardingProgress) => {
     if (!selectedEmployee) return
     
     try {
-      await employeeService.updateOnboardingProgress(selectedEmployee.Id, onboardingProgress)
-      // Update the selected employee with new progress
-      setSelectedEmployee(prev => ({
-        ...prev,
-        onboardingProgress
-      }))
-      await loadData()
+      const result = await employeeService.updateOnboardingProgress(selectedEmployee.Id, onboardingProgress)
+      if (result) {
+        // Update the selected employee with new progress
+        setSelectedEmployee(prev => ({
+          ...prev,
+          onboardingProgress
+        }))
+        await loadData()
+      }
     } catch (error) {
       console.error('Failed to update onboarding progress:', error)
       throw error // Re-throw for component error handling
@@ -214,12 +242,12 @@ const handleModalSave = () => {
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <div>
+<div>
                   <h2 className="text-xl font-semibold text-gray-900">
                     Onboarding Progress
                   </h2>
                   <p className="text-sm text-gray-600 mt-1">
-                    {selectedEmployee.firstName} {selectedEmployee.lastName}
+                    {selectedEmployee.firstName || selectedEmployee.first_name_c} {selectedEmployee.lastName || selectedEmployee.last_name_c}
                   </p>
                 </div>
                 <button

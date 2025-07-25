@@ -1,14 +1,26 @@
-import { NavLink } from "react-router-dom"
-import { motion } from "framer-motion"
-import ApperIcon from "@/components/ApperIcon"
-import { cn } from "@/utils/cn"
+import { NavLink } from "react-router-dom";
+import { motion } from "framer-motion";
+import React, { useContext } from "react";
+import { useSelector } from "react-redux";
+import { AuthContext } from "@/App";
+import { cn } from "@/utils/cn";
+import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
 
 const Sidebar = ({ isOpen, onClose }) => {
+  const { logout } = useContext(AuthContext)
+  const { user } = useSelector((state) => state.user)
+  
   const navigation = [
     { name: "All Employees", href: "/employees", icon: "Users" },
     { name: "Departments", href: "/departments", icon: "Building2" },
     { name: "Export Data", href: "/export", icon: "Download" }
   ]
+
+  const handleLogout = async () => {
+    await logout()
+    onClose?.()
+  }
 
   const sidebarContent = (
     <>
@@ -56,14 +68,31 @@ const Sidebar = ({ isOpen, onClose }) => {
           </NavLink>
         ))}
       </nav>
-
-      {/* Footer */}
-      <div className="mt-auto px-6 py-4">
-        <div className="text-xs text-gray-400">
+{/* User Info & Logout */}
+      <div className="mt-auto px-4 py-4 border-t border-gray-200">
+        {user && (
+          <div className="mb-4 px-2">
+            <div className="text-sm font-medium text-gray-900 truncate">
+              {user.firstName} {user.lastName}
+            </div>
+            <div className="text-xs text-gray-500 truncate">
+              {user.emailAddress}
+            </div>
+          </div>
+        )}
+        <Button
+          variant="ghost"
+          onClick={handleLogout}
+          className="w-full justify-start px-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+        >
+          <ApperIcon name="LogOut" className="w-4 h-4 mr-2" />
+          Logout
+        </Button>
+        <div className="text-xs text-gray-400 mt-4">
           © 2024 TeamPulse
         </div>
       </div>
-    </>
+</>
   )
 
   return (
@@ -133,8 +162,29 @@ const Sidebar = ({ isOpen, onClose }) => {
                       </>
                     )}
                   </NavLink>
-                ))}
+))}
               </nav>
+              {/* Mobile User Info & Logout */}
+              <div className="px-4 py-4 border-t border-gray-200 mt-auto">
+                {user && (
+                  <div className="mb-4 px-2">
+                    <div className="text-sm font-medium text-gray-900 truncate">
+                      {user.firstName} {user.lastName}
+                    </div>
+                    <div className="text-xs text-gray-500 truncate">
+                      {user.emailAddress}
+                    </div>
+                  </div>
+                )}
+                <Button
+                  variant="ghost"
+                  onClick={handleLogout}
+                  className="w-full justify-start px-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                >
+                  <ApperIcon name="LogOut" className="w-4 h-4 mr-2" />
+                  Logout
+                </Button>
+              </div>
             </div>
           </motion.div>
         </div>

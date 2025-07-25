@@ -20,7 +20,7 @@ const DepartmentsPage = () => {
     loadData()
   }, [])
 
-  const loadData = async () => {
+const loadData = async () => {
     setLoading(true)
     setError(null)
     try {
@@ -28,8 +28,33 @@ const DepartmentsPage = () => {
         departmentService.getAll(),
         employeeService.getAll()
       ])
-      setDepartments(departmentsData)
-      setEmployees(employeesData)
+      
+      // Transform data to match UI expectations
+      const transformedDepartments = departmentsData.map(dept => ({
+        ...dept,
+        name: dept.Name || '',
+        description: dept.description_c || '',
+        headId: dept.head_id_c || '',
+        parentDepartmentId: dept.parent_department_id_c || '',
+        employeeCount: dept.employee_count_c || 0
+      }))
+      
+      const transformedEmployees = employeesData.map(emp => ({
+        ...emp,
+        firstName: emp.first_name_c || '',
+        lastName: emp.last_name_c || '',
+        email: emp.email_c || '',
+        phone: emp.phone_c || '',
+        photoUrl: emp.photo_url_c || '',
+        role: emp.role_c || '',
+        department: emp.department_c || '',
+        startDate: emp.start_date_c || '',
+        status: emp.status_c || 'active',
+        managerId: emp.manager_id_c || ''
+      }))
+      
+      setDepartments(transformedDepartments)
+      setEmployees(transformedEmployees)
     } catch (err) {
       setError("Failed to load department data")
       console.error("Load error:", err)

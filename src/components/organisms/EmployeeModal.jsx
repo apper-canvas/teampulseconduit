@@ -11,41 +11,41 @@ import { departmentService } from "@/services/api/departmentService"
 import { format } from "date-fns"
 
 const EmployeeModal = ({ employee, isOpen, onClose, onSave }) => {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    role: "",
-    department: "",
-    startDate: "",
-    status: "active"
+const [formData, setFormData] = useState({
+    first_name_c: "",
+    last_name_c: "",
+    email_c: "",
+    phone_c: "",
+    role_c: "",
+    department_c: "",
+    start_date_c: "",
+    status_c: "active"
   })
   const [departments, setDepartments] = useState([])
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (employee) {
+if (employee) {
       setFormData({
-        firstName: employee.firstName || "",
-        lastName: employee.lastName || "",
-        email: employee.email || "",
-        phone: employee.phone || "",
-        role: employee.role || "",
-        department: employee.department || "",
-        startDate: employee.startDate ? format(new Date(employee.startDate), "yyyy-MM-dd") : "",
-        status: employee.status || "active"
+        first_name_c: employee.firstName || employee.first_name_c || "",
+        last_name_c: employee.lastName || employee.last_name_c || "",
+        email_c: employee.email || employee.email_c || "",
+        phone_c: employee.phone || employee.phone_c || "",
+        role_c: employee.role || employee.role_c || "",
+        department_c: employee.department || employee.department_c || "",
+        start_date_c: (employee.startDate || employee.start_date_c) ? format(new Date(employee.startDate || employee.start_date_c), "yyyy-MM-dd") : "",
+        status_c: employee.status || employee.status_c || "active"
       })
     } else {
       setFormData({
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        role: "",
-        department: "",
-        startDate: format(new Date(), "yyyy-MM-dd"),
-        status: "active"
+        first_name_c: "",
+        last_name_c: "",
+        email_c: "",
+        phone_c: "",
+        role_c: "",
+        department_c: "",
+        start_date_c: format(new Date(), "yyyy-MM-dd"),
+        status_c: "active"
       })
     }
 
@@ -70,18 +70,22 @@ const EmployeeModal = ({ employee, isOpen, onClose, onSave }) => {
     e.preventDefault()
     setLoading(true)
 
-    try {
+try {
       const employeeData = {
         ...formData,
-        startDate: new Date(formData.startDate).toISOString()
+        start_date_c: new Date(formData.start_date_c).toISOString()
       }
 
       if (employee) {
-        await employeeService.update(employee.Id, employeeData)
-        toast.success("Employee updated successfully!")
+        const result = await employeeService.update(employee.Id, employeeData)
+        if (result) {
+          toast.success("Employee updated successfully!")
+        }
       } else {
-        await employeeService.create(employeeData)
-        toast.success("Employee created successfully!")
+        const result = await employeeService.create(employeeData)
+        if (result) {
+          toast.success("Employee created successfully!")
+        }
       }
 
       onSave()
@@ -97,12 +101,14 @@ const EmployeeModal = ({ employee, isOpen, onClose, onSave }) => {
   const handleDelete = async () => {
     if (!employee || !window.confirm("Are you sure you want to delete this employee?")) return
 
-    setLoading(true)
+setLoading(true)
     try {
-      await employeeService.delete(employee.Id)
-      toast.success("Employee deleted successfully!")
-      onSave()
-      onClose()
+      const result = await employeeService.delete(employee.Id)
+      if (result) {
+        toast.success("Employee deleted successfully!")
+        onSave()
+        onClose()
+      }
     } catch (error) {
       toast.error("Failed to delete employee")
       console.error("Delete error:", error)
@@ -153,81 +159,81 @@ const EmployeeModal = ({ employee, isOpen, onClose, onSave }) => {
         <div className="px-8 py-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input
+<Input
                 label="First Name"
-                name="firstName"
-                value={formData.firstName}
+                name="first_name_c"
+                value={formData.first_name_c}
                 onChange={handleChange}
                 required
               />
               
               <Input
                 label="Last Name"
-                name="lastName"
-                value={formData.lastName}
+                name="last_name_c"
+                value={formData.last_name_c}
                 onChange={handleChange}
                 required
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input
+<Input
                 label="Email"
-                name="email"
+                name="email_c"
                 type="email"
-                value={formData.email}
+                value={formData.email_c}
                 onChange={handleChange}
                 required
               />
               
               <Input
                 label="Phone"
-                name="phone"
-                value={formData.phone}
+                name="phone_c"
+                value={formData.phone_c}
                 onChange={handleChange}
                 required
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input
+<Input
                 label="Role"
-                name="role"
-                value={formData.role}
+                name="role_c"
+                value={formData.role_c}
                 onChange={handleChange}
                 required
               />
               
               <Select
                 label="Department"
-                name="department"
-                value={formData.department}
+                name="department_c"
+                value={formData.department_c}
                 onChange={handleChange}
                 required
               >
                 <option value="">Select Department</option>
                 {departments.map((dept) => (
-                  <option key={dept.Id} value={dept.name}>
-                    {dept.name}
+                  <option key={dept.Id} value={dept.name || dept.Name}>
+                    {dept.name || dept.Name}
                   </option>
                 ))}
               </Select>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input
+<Input
                 label="Start Date"
-                name="startDate"
+                name="start_date_c"
                 type="date"
-                value={formData.startDate}
+                value={formData.start_date_c}
                 onChange={handleChange}
                 required
               />
               
               <Select
                 label="Status"
-                name="status"
-                value={formData.status}
+                name="status_c"
+                value={formData.status_c}
                 onChange={handleChange}
                 required
               >

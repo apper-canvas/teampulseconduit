@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react"
-import { toast } from "react-toastify"
-import Header from "@/components/organisms/Header"
-import Loading from "@/components/ui/Loading"
-import Error from "@/components/ui/Error"
-import Button from "@/components/atoms/Button"
-import Card from "@/components/atoms/Card"
-import ApperIcon from "@/components/ApperIcon"
-import { employeeService } from "@/services/api/employeeService"
-import { format } from "date-fns"
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { format } from "date-fns";
+import { employeeService } from "@/services/api/employeeService";
+import ApperIcon from "@/components/ApperIcon";
+import Header from "@/components/organisms/Header";
+import Card from "@/components/atoms/Card";
+import Button from "@/components/atoms/Button";
+import Error from "@/components/ui/Error";
+import Loading from "@/components/ui/Loading";
 
 const ExportPage = () => {
   const [employees, setEmployees] = useState([])
@@ -19,12 +19,27 @@ const ExportPage = () => {
     loadData()
   }, [])
 
-  const loadData = async () => {
+const loadData = async () => {
     setLoading(true)
     setError(null)
     try {
       const data = await employeeService.getAll()
-      setEmployees(data)
+      
+      // Transform data to match UI expectations
+      const transformedEmployees = data.map(emp => ({
+        ...emp,
+        firstName: emp.first_name_c || '',
+        lastName: emp.last_name_c || '',
+        email: emp.email_c || '',
+        phone: emp.phone_c || '',
+        photoUrl: emp.photo_url_c || '',
+        role: emp.role_c || '',
+        department: emp.department_c || '',
+        startDate: emp.start_date_c || '',
+        status: emp.status_c || 'active'
+      }))
+      
+      setEmployees(transformedEmployees)
     } catch (err) {
       setError("Failed to load employee data")
       console.error("Load error:", err)
@@ -56,16 +71,16 @@ const ExportPage = () => {
       ]
 
       // Convert employees to CSV rows
-      const csvRows = employees.map(employee => [
+const csvRows = employees.map(employee => [
         employee.Id,
-        employee.firstName,
-        employee.lastName,
-        employee.email,
-        employee.phone,
-        employee.role,
-        employee.department,
-        format(new Date(employee.startDate), "yyyy-MM-dd"),
-        employee.status
+        employee.firstName || employee.first_name_c,
+        employee.lastName || employee.last_name_c,
+        employee.email || employee.email_c,
+        employee.phone || employee.phone_c,
+        employee.role || employee.role_c,
+        employee.department || employee.department_c,
+        format(new Date(employee.startDate || employee.start_date_c), "yyyy-MM-dd"),
+        employee.status || employee.status_c
       ])
 
       // Combine headers and rows
@@ -142,9 +157,9 @@ const ExportPage = () => {
                     <ApperIcon name="Check" className="w-4 h-4 text-green-500" />
                     <span>Employment dates and status</span>
                   </li>
-                  <li className="flex items-center space-x-2">
+<li className="flex items-center space-x-2">
                     <ApperIcon name="Check" className="w-4 h-4 text-green-500" />
-                    <span>CSV format for easy import</span>
+                    <span>Complete data export</span>
                   </li>
                 </ul>
               </div>
@@ -189,23 +204,23 @@ const ExportPage = () => {
                 <div className="text-sm text-primary-600 font-medium">Total Employees</div>
               </div>
 
-              <div className="bg-gradient-to-r from-accent-50 to-accent-100 rounded-lg p-4 text-center">
+<div className="bg-gradient-to-r from-accent-50 to-accent-100 rounded-lg p-4 text-center">
                 <div className="text-2xl font-bold bg-gradient-to-r from-accent-600 to-accent-700 bg-clip-text text-transparent">
-                  {employees.filter(emp => emp.status === "active").length}
+                  {employees.filter(emp => (emp.status || emp.status_c) === "active").length}
                 </div>
                 <div className="text-sm text-accent-600 font-medium">Active Employees</div>
               </div>
 
               <div className="bg-gradient-to-r from-secondary-50 to-secondary-100 rounded-lg p-4 text-center">
-                <div className="text-2xl font-bold bg-gradient-to-r from-secondary-600 to-secondary-700 bg-clip-text text-transparent">
-                  {[...new Set(employees.map(emp => emp.department))].length}
+<div className="text-2xl font-bold bg-gradient-to-r from-secondary-600 to-secondary-700 bg-clip-text text-transparent">
+                  {[...new Set(employees.map(emp => emp.department || emp.department_c))].length}
                 </div>
                 <div className="text-sm text-secondary-600 font-medium">Departments</div>
               </div>
 
               <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4 text-center">
                 <div className="text-2xl font-bold bg-gradient-to-r from-gray-600 to-gray-700 bg-clip-text text-transparent">
-                  {[...new Set(employees.map(emp => emp.role))].length}
+                  {[...new Set(employees.map(emp => emp.role || emp.role_c))].length}
                 </div>
                 <div className="text-sm text-gray-600 font-medium">Unique Roles</div>
               </div>
@@ -234,11 +249,11 @@ const ExportPage = () => {
               .map((employee) => (
                 <div key={employee.Id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full flex items-center justify-center">
-                      {employee.photoUrl ? (
+<div className="w-10 h-10 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full flex items-center justify-center">
+                      {(employee.photoUrl || employee.photo_url_c) ? (
                         <img 
-                          src={employee.photoUrl} 
-                          alt={`${employee.firstName} ${employee.lastName}`}
+                          src={employee.photoUrl || employee.photo_url_c} 
+                          alt={`${employee.firstName || employee.first_name_c} ${employee.lastName || employee.last_name_c}`}
                           className="w-10 h-10 rounded-full object-cover"
                         />
                       ) : (
@@ -247,15 +262,15 @@ const ExportPage = () => {
                     </div>
                     <div>
                       <div className="font-medium text-gray-900">
-                        {employee.firstName} {employee.lastName}
+                        {employee.firstName || employee.first_name_c} {employee.lastName || employee.last_name_c}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {employee.role} • {employee.department}
-                      </div>
+                        {employee.role || employee.role_c} • {employee.department || employee.department_c}
+</div>
                     </div>
                   </div>
                   <div className="text-sm text-gray-500">
-                    Started {format(new Date(employee.startDate), "MMM d, yyyy")}
+                    Started {format(new Date(employee.startDate || employee.start_date_c), "MMM d, yyyy")}
                   </div>
                 </div>
               ))}

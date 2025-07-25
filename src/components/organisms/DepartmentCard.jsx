@@ -4,8 +4,8 @@ import Badge from "@/components/atoms/Badge"
 import ApperIcon from "@/components/ApperIcon"
 
 const DepartmentCard = ({ department, employees, onClick }) => {
-  const departmentEmployees = employees.filter(emp => emp.department === department.name)
-  const headEmployee = departmentEmployees.find(emp => emp.Id === department.headId)
+const departmentEmployees = employees.filter(emp => (emp.department || emp.department_c) === (department.name || department.Name))
+  const headEmployee = departmentEmployees.find(emp => emp.Id === (department.headId || department.head_id_c))
   
   return (
     <Card onClick={() => onClick(department)} className="p-6 group">
@@ -17,12 +17,12 @@ const DepartmentCard = ({ department, employees, onClick }) => {
               <ApperIcon name="Building2" className="w-6 h-6 text-secondary-600" />
             </div>
             <div>
-              <h3 className="font-display font-semibold text-gray-900 text-lg">
-                {department.name}
+<h3 className="font-display font-semibold text-gray-900 text-lg">
+                {department.name || department.Name}
               </h3>
               {headEmployee && (
                 <p className="text-sm text-gray-600">
-                  Head: {headEmployee.firstName} {headEmployee.lastName}
+                  Head: {headEmployee.firstName || headEmployee.first_name_c} {headEmployee.lastName || headEmployee.last_name_c}
                 </p>
               )}
             </div>
@@ -33,9 +33,9 @@ const DepartmentCard = ({ department, employees, onClick }) => {
         </div>
 
         {/* Description */}
-        {department.description && (
+{(department.description || department.description_c) && (
           <p className="text-sm text-gray-600 leading-relaxed">
-            {department.description}
+            {department.description || department.description_c}
           </p>
         )}
 
@@ -53,15 +53,15 @@ const DepartmentCard = ({ department, employees, onClick }) => {
                     className="w-8 h-8 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full border-2 border-white flex items-center justify-center"
                     title={`${employee.firstName} ${employee.lastName}`}
                   >
-                    {employee.photoUrl ? (
-                      <img 
-                        src={employee.photoUrl} 
-                        alt={`${employee.firstName} ${employee.lastName}`}
-                        className="w-8 h-8 rounded-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-xs font-medium text-primary-600">
-                        {employee.firstName[0]}{employee.lastName[0]}
+{(employee.photoUrl || employee.photo_url_c) ? (
+                        <img 
+                          src={employee.photoUrl || employee.photo_url_c} 
+                          alt={`${employee.firstName || employee.first_name_c} ${employee.lastName || employee.last_name_c}`}
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-xs font-medium text-primary-600">
+                          {(employee.firstName || employee.first_name_c)?.[0]}{(employee.lastName || employee.last_name_c)?.[0]}
                       </span>
                     )}
                   </div>
@@ -79,10 +79,10 @@ const DepartmentCard = ({ department, employees, onClick }) => {
               <div className="space-y-1 max-h-32 overflow-y-auto">
                 {departmentEmployees.slice(0, 6).map((employee) => (
                   <div key={employee.Id} className="flex items-center justify-between text-sm">
-                    <span className="text-gray-700">
-                      {employee.firstName} {employee.lastName}
+<span className="text-gray-700">
+                      {employee.firstName || employee.first_name_c} {employee.lastName || employee.last_name_c}
                     </span>
-                    <span className="text-gray-500">{employee.role}</span>
+                    <span className="text-gray-500">{employee.role || employee.role_c}</span>
                   </div>
                 ))}
                 {departmentEmployees.length > 6 && (

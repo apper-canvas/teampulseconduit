@@ -17,10 +17,10 @@ const EmployeeCard = ({ employee, onClick, onEmail, onCall }) => {
         {/* Avatar */}
         <div className="relative">
           <div className="w-16 h-16 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full flex items-center justify-center">
-            {employee.photoUrl ? (
+{employee.photoUrl ? (
               <img 
                 src={employee.photoUrl} 
-                alt={`${employee.firstName} ${employee.lastName}`}
+                alt={`${employee.firstName || employee.first_name_c} ${employee.lastName || employee.last_name_c}`}
                 className="w-16 h-16 rounded-full object-cover"
               />
             ) : (
@@ -28,25 +28,25 @@ const EmployeeCard = ({ employee, onClick, onEmail, onCall }) => {
             )}
           </div>
           <div className="absolute -bottom-1 -right-1">
-            <StatusIndicator status={employee.status} size="md" />
+            <StatusIndicator status={employee.status || employee.status_c} size="md" />
           </div>
         </div>
 
         {/* Employee Info */}
         <div className="text-center space-y-2">
           <h3 className="font-display font-semibold text-gray-900 text-lg">
-            {employee.firstName} {employee.lastName}
+            {employee.firstName || employee.first_name_c} {employee.lastName || employee.last_name_c}
           </h3>
-          <p className="text-sm text-gray-600">{employee.role}</p>
-          <Badge variant="primary">{employee.department}</Badge>
+          <p className="text-sm text-gray-600">{employee.role || employee.role_c}</p>
+          <Badge variant="primary">{employee.department || employee.department_c}</Badge>
         </div>
 
         {/* Contact Info */}
         <div className="w-full space-y-1 text-center">
-          <p className="text-xs text-gray-500">{employee.email}</p>
-          <p className="text-xs text-gray-500">{employee.phone}</p>
+          <p className="text-xs text-gray-500">{employee.email || employee.email_c}</p>
+          <p className="text-xs text-gray-500">{employee.phone || employee.phone_c}</p>
           <p className="text-xs text-gray-500">
-            Started {format(new Date(employee.startDate), "MMM yyyy")}
+            Started {format(new Date(employee.startDate || employee.start_date_c), "MMM yyyy")}
           </p>
         </div>
 
@@ -55,7 +55,7 @@ const EmployeeCard = ({ employee, onClick, onEmail, onCall }) => {
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            onClick={(e) => handleQuickAction(e, () => onEmail(employee.email))}
+onClick={(e) => handleQuickAction(e, () => onEmail(employee.email || employee.email_c))}
             className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
             title="Send Email"
           >
@@ -65,7 +65,7 @@ const EmployeeCard = ({ employee, onClick, onEmail, onCall }) => {
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            onClick={(e) => handleQuickAction(e, () => onCall(employee.phone))}
+            onClick={(e) => handleQuickAction(e, () => onCall(employee.phone || employee.phone_c))}
             className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition-colors"
             title="Call"
           >

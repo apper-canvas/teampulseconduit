@@ -1,10 +1,10 @@
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { toast } from 'react-toastify'
-import Card from '@/components/atoms/Card'
-import Button from '@/components/atoms/Button'
-import ApperIcon from '@/components/ApperIcon'
-import { cn } from '@/utils/cn'
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { toast } from "react-toastify";
+import { cn } from "@/utils/cn";
+import ApperIcon from "@/components/ApperIcon";
+import Card from "@/components/atoms/Card";
+import Button from "@/components/atoms/Button";
 
 const defaultOnboardingSteps = [
   {
@@ -172,7 +172,7 @@ const OnboardingChecklist = ({ employee, onProgressUpdate }) => {
         </div>
 
         {/* Summary */}
-        {progressPercentage === 100 && (
+{progressPercentage === 100 && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -181,7 +181,7 @@ const OnboardingChecklist = ({ employee, onProgressUpdate }) => {
             <ApperIcon name="PartyPopper" className="w-8 h-8 mx-auto mb-2" />
             <h4 className="font-semibold text-lg">Onboarding Complete! 🎉</h4>
             <p className="text-sm opacity-90 mt-1">
-              {employee?.firstName} has completed all onboarding steps
+              {employee?.firstName || employee?.first_name_c} has completed all onboarding steps
             </p>
           </motion.div>
         )}

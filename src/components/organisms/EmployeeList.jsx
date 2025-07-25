@@ -49,10 +49,10 @@ const EmployeeList = ({ employees, onEmployeeClick, onEmail, onCall }) => {
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center space-x-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-primary-100 to-primary-200 rounded-full flex items-center justify-center">
-                      {employee.photoUrl ? (
+{employee.photoUrl || employee.photo_url_c ? (
                         <img 
-                          src={employee.photoUrl} 
-                          alt={`${employee.firstName} ${employee.lastName}`}
+                          src={employee.photoUrl || employee.photo_url_c} 
+                          alt={`${employee.firstName || employee.first_name_c} ${employee.lastName || employee.last_name_c}`}
                           className="w-10 h-10 rounded-full object-cover"
                         />
                       ) : (
@@ -61,33 +61,33 @@ const EmployeeList = ({ employees, onEmployeeClick, onEmail, onCall }) => {
                     </div>
                     <div>
                       <div className="font-medium text-gray-900">
-                        {employee.firstName} {employee.lastName}
+                        {employee.firstName || employee.first_name_c} {employee.lastName || employee.last_name_c}
                       </div>
                       <div className="text-sm text-gray-500">
-                        Started {format(new Date(employee.startDate), "MMM yyyy")}
+                        Started {format(new Date(employee.startDate || employee.start_date_c), "MMM yyyy")}
                       </div>
                     </div>
                   </div>
                 </td>
                 
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{employee.role}</div>
+<td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm font-medium text-gray-900">{employee.role || employee.role_c}</div>
                 </td>
                 
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <Badge variant="primary">{employee.department}</Badge>
+                  <Badge variant="primary">{employee.department || employee.department_c}</Badge>
                 </td>
                 
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{employee.email}</div>
-                  <div className="text-sm text-gray-500">{employee.phone}</div>
+                  <div className="text-sm text-gray-900">{employee.email || employee.email_c}</div>
+                  <div className="text-sm text-gray-500">{employee.phone || employee.phone_c}</div>
                 </td>
                 
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center space-x-2">
-                    <StatusIndicator status={employee.status} />
-                    <Badge variant={employee.status === "active" ? "active" : "inactive"}>
-                      {employee.status}
+                    <StatusIndicator status={employee.status || employee.status_c} />
+                    <Badge variant={(employee.status || employee.status_c) === "active" ? "active" : "inactive"}>
+                      {employee.status || employee.status_c}
                     </Badge>
                   </div>
                 </td>
@@ -97,7 +97,7 @@ const EmployeeList = ({ employees, onEmployeeClick, onEmail, onCall }) => {
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      onClick={(e) => handleQuickAction(e, () => onEmail(employee.email))}
+onClick={(e) => handleQuickAction(e, () => onEmail(employee.email || employee.email_c))}
                       className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                       title="Send Email"
                     >
@@ -107,7 +107,7 @@ const EmployeeList = ({ employees, onEmployeeClick, onEmail, onCall }) => {
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      onClick={(e) => handleQuickAction(e, () => onCall(employee.phone))}
+                      onClick={(e) => handleQuickAction(e, () => onCall(employee.phone || employee.phone_c))}
                       className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                       title="Call"
                     >
