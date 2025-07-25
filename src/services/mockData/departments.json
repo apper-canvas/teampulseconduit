@@ -1,0 +1,66 @@
+[
+  {
+    "Id": 1,
+    "name": "Engineering",
+    "description": "Responsible for product development, technical infrastructure, and software engineering initiatives.",
+    "headId": 12,
+    "parentDepartmentId": "",
+    "employeeCount": 4
+  },
+  {
+    "Id": 2,
+    "name": "Product",
+    "description": "Drives product strategy, roadmap planning, and cross-functional coordination for product delivery.",
+    "headId": 2,
+    "parentDepartmentId": "",
+    "employeeCount": 1
+  },
+  {
+    "Id": 3,
+    "name": "Design",
+    "description": "Creates user-centered design solutions and maintains design systems across all products.",
+    "headId": 3,
+    "parentDepartmentId": "",
+    "employeeCount": 1
+  },
+  {
+    "Id": 4,
+    "name": "Marketing",
+    "description": "Manages brand positioning, content strategy, and market growth initiatives.",
+    "headId": 4,
+    "parentDepartmentId": "",
+    "employeeCount": 2
+  },
+  {
+    "Id": 5,
+    "name": "Sales",
+    "description": "Drives revenue growth through customer acquisition and relationship management.",
+    "headId": 5,
+    "parentDepartmentId": "",
+    "employeeCount": 1
+  },
+  {
+    "Id": 6,
+    "name": "Human Resources",
+    "description": "Manages talent acquisition, employee development, and organizational culture initiatives.",
+    "headId": 7,
+    "parentDepartmentId": "",
+    "employeeCount": 1
+  },
+  {
+    "Id": 7,
+    "name": "Finance",
+    "description": "Oversees financial planning, analysis, and strategic business operations.",
+    "headId": 8,
+    "parentDepartmentId": "",
+    "employeeCount": 1
+  },
+  {
+    "Id": 8,
+    "name": "Customer Success",
+    "description": "Ensures customer satisfaction, retention, and ongoing success with our products.",
+    "headId": 9,
+    "parentDepartmentId": "",
+    "employeeCount": 1
+  }
+]
